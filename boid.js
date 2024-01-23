@@ -68,7 +68,7 @@ class Boid {
         for(let i = 0; i < fishList.length; i++) {
 
             let dis = sqrt(pow(this.xPos - fishList[i].xPos,2) + pow(this.yPos - fishList[i].yPos,2));
-            if(I != i && dis < 50 && this.color == fishList[i].color) {
+            if(I != i && dis < 75 && this.color == fishList[i].color) {
                 avgX += fishList[i].xPos;
                 avgY += fishList[i].yPos;
                 avgC++;
@@ -82,20 +82,20 @@ class Boid {
                 let tempY2 = this.xPos * sin(phi) + this.yPos * cos(phi);
 
                 if(this.theta < fishList[i].theta) {
-                    gamma += 1;
+                    gamma += 1 * (10/dis);
                 } else {
-                    gamma -= 1;
+                    gamma -= 1 * (10/dis);
                 }
 
                 if(dis < 50) {
                     
                     if(tempY < tempY2 + 10) {
                         
-                        if(dis < 50) {
+                        if(dis < 100) {
                             if(tempX > tempX2) {
-                                gamma += -(1);
+                                gamma += -(1) * (10/dis);
                             } else {
-                                gamma += (1 );
+                                gamma += (1) * (10/dis);
                             }
                         }
                     } 
@@ -128,12 +128,12 @@ class Boid {
                 gamma += (1);
             }
         // } 
-        if(sqrt(pow(this.xPos - mouseX,2) + pow(this.yPos - mouseY,2)) < 9) {
+        if(sqrt(pow(this.xPos - mouseX,2) + pow(this.yPos - mouseY,2)) < 25) {
             circle(mouseX,mouseY,25);
             if(tempXM < tempX2) {
-                gamma += -15;
-            } else {
                 gamma += 15;
+            } else {
+                gamma += -15;
             }
         }         
         if(this.yep) {
