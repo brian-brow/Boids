@@ -1,10 +1,11 @@
 let fishList = [];
 let fish;
-const DIM = 1000
+const dimWidth = screen.availWidth
+const dimHieght = screen.availHeight - 100; 
 
 function preload() {
   for(let i = 0; i < 500; i++) {
-    fishList.push(new Boid(Math.random() * DIM,Math.random() * DIM,3, 255, DIM));
+    fishList.push(new Boid(Math.random() * dimWidth,Math.random() * dimWidth,3, 255, dimWidth));
     fishList[i].update(i);
   }
   fishList[0].yep = true;
@@ -13,8 +14,10 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(DIM, DIM);
+  console.log(dimWidth)
+  let cnv = createCanvas(dimWidth, dimHieght);
   angleMode(DEGREES);
+  cnv.position(0, 0, 'relative');
   // for(let i = 0; i < 10; i++) {
   //   fishList.push(new Boid());
   // }
