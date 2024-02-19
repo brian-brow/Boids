@@ -5,13 +5,13 @@ const App = () => {
   const sketchRef = useRef();
 
   useEffect(() => {
-    new p5((p) => {
+    const sketch = new p5((p) => {
       let fishList = [];
       let dimWidth = p.windowWidth;
       let dimHeight = p.windowHeight - 100;
 
       class Boid {
-        constructor(xPos = 200, yPos = 200, v = 4, color = 255, dim) {
+        constructor(xPos = 200, yPos = 200, v = 4, color = 255, dimX, dimY) {
           p.angleMode(p.DEGREES);
           this.xPos = xPos;
           this.yPos = yPos;
@@ -23,7 +23,8 @@ const App = () => {
           this.cY = -1;
           this.yep = false;
           this.color = color;
-          this.dim = dim;
+          this.dimX = dimX;
+          this.dimY = dimY;
         }
 
         update(angle) {
@@ -42,7 +43,7 @@ const App = () => {
         display() {
           if (this.yep) {
             p.noFill();
-            // p.circle(this.xPos, this.yPos, 100);
+            p.circle(this.xPos, this.yPos, 100);
             p.fill(255);
           }
           p.fill(this.color);
@@ -51,15 +52,15 @@ const App = () => {
 
         move(x, y) {
           if (y < 0) {
-            y = this.dim;
+            y = this.dimY;
           }
-          if (y > this.dim) {
+          if (y > this.dimY) {
             y = 0;
           }
           if (x < 0) {
-            x = this.dim;
+            x = this.dimX;
           }
-          if (x > this.dim) {
+          if (x > this.dimX) {
             x = 0;
           }
           for (let i = 0; i < 6; i += 2) {
@@ -152,8 +153,8 @@ const App = () => {
       p.setup = () => {
         p.createCanvas(dimWidth, dimHeight).parent(sketchRef.current);
         // Initialize your sketch here
-        for (let i = 0; i < 500; i++) {
-          fishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 3, 255, dimWidth));
+        for (let i = 0; i < 250; i++) {
+          fishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 3, 255, dimWidth, dimHeight));
           fishList[i].update(i);
         }
         fishList[0].yep = true;
@@ -169,6 +170,10 @@ const App = () => {
         }
       };
     });
+    return () => {
+      // Cleanup function to remove p5 sketch when component unmounts
+      sketch.remove();
+    };
   }, []);
 
   return <div ref={sketchRef}></div>;
