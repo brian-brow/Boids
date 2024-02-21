@@ -177,28 +177,34 @@ const Sketch = () => {
         }
     }
 
-      p.setup = () => {
+    p.setup = () => {
         dimWidth = sketchRef.current.offsetWidth;
         dimHeight = window.innerHeight;
         p.createCanvas(dimWidth, dimHeight).parent(sketchRef.current);
-
-        // Initialize your sketch here
+      
+        
         for (let i = 0; i < 250; i++) {
-          const red = p.random(255);
-          const green = p.random(255);
-          const blue = p.random(255);
-          
-          const color = p.color(red, green, blue);
+          let color;
+          const randomColor = p.floor(p.random(3));
+      
+          if (randomColor === 0) {
+            color = p.color(255, 0, 0); 
+          } else if (randomColor === 1) {
+            color = p.color(0, 255, 0); 
+          } else {
+            color = p.color(0, 0, 255); 
+          }
+      
           fishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 3, color, dimWidth, dimHeight));
           fishList[i].update(i);
         }
-
+      
         fishList[0].yep = true;
         fishList[0].color = 255;
       };
 
       p.draw = () => {
-        p.background(150);
+        p.background(0);
         for (let i = 0; i < fishList.length; i++) {
           fishList[i].check(fishList, i);
           fishList[i].update(0);
