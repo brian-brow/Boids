@@ -31,8 +31,8 @@ const Sketch = () => {
             this.color = color;
             this.dimX = dimX;
             this.dimY = dimY;
-            this.avoidRadius = 20;
-            this.visionRadius = 60;
+            this.avoidRadius = 16;
+            this.visionRadius = 80;
         }
 
         update() {
@@ -139,7 +139,7 @@ const Sketch = () => {
             let centeringFactor = 0.0005;
             let avoidFactor = 0.04;
             let matchingFactor = 0.05;
-            let turnFactor = 0.1;
+            let turnFactor = 0.2;
             let bias = 0.01;
             let maxSpeed = 10;
             let minSpeed = 3;
@@ -162,6 +162,7 @@ const Sketch = () => {
 
                 //standard boid logic
                 if (I != i && dis < this.visionRadius && this.color.toString() == fishList[i].color.toString()) {
+                    // if (I != i && dis < this.visionRadius) {
                     avg_vx += fishList[i].vel.x;
                     avg_vy += fishList[i].vel.y;
 
