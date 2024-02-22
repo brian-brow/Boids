@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import p5 from 'p5';
 
-const Sketch = ({boidColors}) => {
+const Sketch = ({boidColors,sharkEnabled}) => {
   const sketchRef = React.useRef();
 
   useEffect(() => {
@@ -13,7 +13,7 @@ const Sketch = ({boidColors}) => {
       let redCount = boidColors.redCount;
       let greenCount = boidColors.greenCount;
       let blueCount = boidColors.blueCount;
-
+      let isSharkEnabled = sharkEnabled;
       class Boid {
         constructor(xPos = 200, yPos = 200, v = 4, color = 255, dimX, dimY) {
             this.Pos = p.createVector(xPos,yPos);
@@ -264,10 +264,9 @@ const Sketch = ({boidColors}) => {
             blueFishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
         }
         
-        // fishList[0].yep = true;
-        // fishList[0].color = 255;
-        // fishList[1].shark = true;
-        // fishList[1].color = 0;
+        // // fishList[0].yep = true;
+        // // fishList[0].color = 255;
+
       };
 
       p.draw = () => {
@@ -282,8 +281,10 @@ const Sketch = ({boidColors}) => {
            redFishList[i].update();
            redFishList[i].display();
            redFishList[0].yep = true;
-        //    redFishList[1].shark = true;
-        //    redFishList[1].color = 0;
+           if (isSharkEnabled){
+                redFishList[0].shark = true;
+                redFishList[0].color = 255;
+           }
         }
         for (let i = 0; i < greenFishList.length; i++) {
             greenFishList[i].check(greenFishList, i);

@@ -6,6 +6,7 @@ import About from './components/about';
 const App = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [boidColors, setBoidColors] = useState({ redCount: 100, greenCount: 100, blueCount: 100 });
+  const [sharkEnabled, setSharkEnabled] = useState(false);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -15,8 +16,8 @@ const App = () => {
     const redCount = parseInt(colors.redCount);
     const greenCount = parseInt(colors.greenCount);
     const blueCount = parseInt(colors.blueCount);
-    console.log({ redCount, greenCount, blueCount });
     setBoidColors({ redCount, greenCount, blueCount });
+    setSharkEnabled(colors.sharkEnabled);
   };
 
   return (
@@ -31,7 +32,7 @@ const App = () => {
         </a>
       </header>
       <Modal isOpen={menuOpen} onClose={toggleMenu} onChange={handleModalChange} />
-      <Sketch boidColors={boidColors} />
+      <Sketch boidColors={boidColors} sharkEnabled={sharkEnabled} />
       <About />
     </div>
   );
