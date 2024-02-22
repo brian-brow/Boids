@@ -14,8 +14,6 @@ const Modal = ({ isOpen, onClose, onChange }) => {
     } else if (color === 'blue') {
       setBlueCount(value);
     }
-    
-    onChange({ redCount, greenCount, blueCount });
   };
 
   const handleSharkCheckboxChange = () => {

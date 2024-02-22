@@ -276,54 +276,27 @@ const Sketch = ({boidColors}) => {
         p.noFill();
         p.stroke(255);
         p.rect(200,200,dimWidth-400,dimHeight-400);
-        if(redCount != redFishList.length + 1) {
-            console.log(redCount);
-            for(let i = 0; i < p.abs(redFishList.length - redCount); i++) {
-                if(redCount < redFishList.length) {
-                    redFishList.pop();
-                } else {
-                    color = p.color(168, 50, 90); 
-                    redFishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
-                }
-            }
-        }
+        
         for (let i = 0; i < redFishList.length; i++) {
            redFishList[i].check(redFishList, i);
            redFishList[i].update();
            redFishList[i].display();
-        }
-
-        if(greenCount != greenFishList.length + 1) {
-            for(let i = 0; i < p.abs(greenFishList.length - greenCount); i++) {
-                if(greenCount < greenFishList.length) {
-                    greenFishList.pop();
-                } else {
-                    color = p.color(168, 50, 90); 
-                    greenFishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
-                }
-            }
+           redFishList[0].yep = true;
+        //    redFishList[1].shark = true;
+        //    redFishList[1].color = 0;
         }
         for (let i = 0; i < greenFishList.length; i++) {
             greenFishList[i].check(greenFishList, i);
             greenFishList[i].update();
             greenFishList[i].display();
          }
-
-         if(blueCount != blueFishList.length + 1) {
-            for(let i = 0; i < p.abs(blueFishList.length - blueCount); i++) {
-                if(blueCount < blueFishList.length) {
-                    blueFishList.pop();
-                } else {
-                    color = p.color(168, 50, 90); 
-                    blueFishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
-                }
-            }
-        }
+         greenFishList[0].yep = true;
          for (let i = 0; i < blueFishList.length; i++) {
             blueFishList[i].check(blueFishList, i);
             blueFishList[i].update();
             blueFishList[i].display();
          }
+         blueFishList[0].yep = true;
       };
 
       p.windowResized = () => {
