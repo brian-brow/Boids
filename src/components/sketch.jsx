@@ -7,9 +7,12 @@ const Sketch = ({boidColors}) => {
   useEffect(() => {
     const sketch = new p5((p) => {
       let dimWidth, dimHeight;
-      let fishList = [];
-      let amount = boidColors.redCount + boidColors.greenCount + boidColors.blueCount;
-      let fishAmount = amount;
+      let redFishList = [];
+      let greenFishList = [];
+      let blueFishList = [];
+      let redCount = boidColors.redCount;
+      let greenCount = boidColors.greenCount;
+      let blueCount = boidColors.blueCount;
 
       class Boid {
         constructor(xPos = 200, yPos = 200, v = 4, color = 255, dimX, dimY) {
@@ -240,21 +243,28 @@ const Sketch = ({boidColors}) => {
         p.createCanvas(dimWidth, dimHeight).parent(sketchRef.current);
       
         
-        for (let i = 0; i < fishAmount; i++) {
-            let color;
-            if (i < boidColors.redCount) {
-                color = p.color(168, 50, 90); 
-            } else if (i < boidColors.redCount + boidColors.greenCount) {
-                color = p.color(90, 168, 50); 
-            } else {
-                color = p.color(50, 98, 168); 
-            }
-            fishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
-            fishList[i].update(i);
+
+        // + boidColors.greenCount) {
+        //     color = p.color(90, 168, 50); 
+        // } else {
+        //     color = p.color(50, 98, 168); 
+
+        let color;
+
+        for (let i = 0; i < redCount; i++) {
+            color = p.color(168, 50, 90); 
+            redFishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
+        }
+        for (let i = 0; i < greenCount; i++) {
+            color = p.color(90, 168, 50); 
+            greenFishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
+        }
+        for (let i = 0; i < blueCount; i++) {
+            color = p.color(50, 98, 168); 
+            blueFishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
         }
         
-        
-        fishList[0].yep = true;
+        // fishList[0].yep = true;
         // fishList[0].color = 255;
         // fishList[1].shark = true;
         // fishList[1].color = 0;
@@ -266,11 +276,54 @@ const Sketch = ({boidColors}) => {
         p.noFill();
         p.stroke(255);
         p.rect(200,200,dimWidth-400,dimHeight-400);
-        for (let i = 0; i < fishList.length; i++) {
-          fishList[i].check(fishList, i);
-          fishList[i].update();
-          fishList[i].display();
+        if(redCount != redFishList.length + 1) {
+            console.log(redCount);
+            for(let i = 0; i < p.abs(redFishList.length - redCount); i++) {
+                if(redCount < redFishList.length) {
+                    redFishList.pop();
+                } else {
+                    color = p.color(168, 50, 90); 
+                    redFishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
+                }
+            }
         }
+        for (let i = 0; i < redFishList.length; i++) {
+           redFishList[i].check(redFishList, i);
+           redFishList[i].update();
+           redFishList[i].display();
+        }
+
+        if(greenCount != greenFishList.length + 1) {
+            for(let i = 0; i < p.abs(greenFishList.length - greenCount); i++) {
+                if(greenCount < greenFishList.length) {
+                    greenFishList.pop();
+                } else {
+                    color = p.color(168, 50, 90); 
+                    greenFishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
+                }
+            }
+        }
+        for (let i = 0; i < greenFishList.length; i++) {
+            greenFishList[i].check(greenFishList, i);
+            greenFishList[i].update();
+            greenFishList[i].display();
+         }
+
+         if(blueCount != blueFishList.length + 1) {
+            for(let i = 0; i < p.abs(blueFishList.length - blueCount); i++) {
+                if(blueCount < blueFishList.length) {
+                    blueFishList.pop();
+                } else {
+                    color = p.color(168, 50, 90); 
+                    blueFishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
+                }
+            }
+        }
+         for (let i = 0; i < blueFishList.length; i++) {
+            blueFishList[i].check(blueFishList, i);
+            blueFishList[i].update();
+            blueFishList[i].display();
+         }
       };
 
       p.windowResized = () => {
@@ -282,7 +335,7 @@ const Sketch = ({boidColors}) => {
     return () => {
       sketch.remove();
     };
-  }, []);
+  }, [boidColors]);
 
   return <div ref={sketchRef}></div>;
 };
