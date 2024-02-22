@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import p5 from 'p5';
 
-const Sketch = () => {
+const Sketch = ({boidColors}) => {
   const sketchRef = React.useRef();
 
-  React.useEffect(() => {
+  useEffect(() => {
     const sketch = new p5((p) => {
       let dimWidth, dimHeight;
       let fishList = [];
+      let amount = boidColors.redCount + boidColors.greenCount + boidColors.blueCount;
+      let fishAmount = amount;
 
       class Boid {
         constructor(xPos = 200, yPos = 200, v = 4, color = 255, dimX, dimY) {
@@ -237,25 +239,19 @@ const Sketch = () => {
         p.createCanvas(dimWidth, dimHeight).parent(sketchRef.current);
       
         
-        for (let i = 0; i < 500; i++) {
-          let color;
-          const randomColor = p.floor(p.random(3));
-      
-          if (randomColor === 0) {
-            color = p.color(168, 50, 90); 
-          } else if (randomColor === 1) {
-            color = p.color(90, 168, 50); 
-          } else {
-            color = p.color(50, 98, 168); 
-          }
-      
-          fishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
-          fishList[i].update(i);
+        for (let i = 0; i < fishAmount; i++) {
+            let color;
+            if (i < boidColors.redCount) {
+                color = p.color(168, 50, 90); 
+            } else if (i < boidColors.redCount + boidColors.greenCount) {
+                color = p.color(90, 168, 50); 
+            } else {
+                color = p.color(50, 98, 168); 
+            }
+            fishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
+            fishList[i].update(i);
         }
-
-        for(let i = 0; i < fishList.length; i++) {
-            console.log(fishList[i].color.toString());
-        }
+        
         
         fishList[0].yep = true;
         // fishList[0].color = 255;
@@ -266,8 +262,6 @@ const Sketch = () => {
       p.draw = () => {
         p.background(20);
         p.fill(255);
-        p.textSize(50);
-        p.text("Text would look good here if we picked the right word",dimWidth/2,dimHeight/2);
         p.noFill();
         p.stroke(255);
         p.rect(200,200,dimWidth-400,dimHeight-400);
@@ -280,7 +274,7 @@ const Sketch = () => {
 
       p.windowResized = () => {
         dimWidth = sketchRef.current.offsetWidth;
-        dimHeight = window.innerHeight - 100; // Adjust as needed for your layout
+        dimHeight = window.innerHeight - 100;
         p.resizeCanvas(dimWidth, dimHeight);
       };
     });
