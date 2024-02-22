@@ -35,7 +35,7 @@ const Modal = ({ isOpen, onClose, onChange }) => {
               <label htmlFor="red" className="block text-sm font-medium text-gray-700">Red: {redCount}</label>
               <input
                 type="range"
-                min="0"
+                min="1"
                 max="255"
                 name="red"
                 value={redCount}
@@ -47,7 +47,7 @@ const Modal = ({ isOpen, onClose, onChange }) => {
               <label htmlFor="green" className="block text-sm font-medium text-gray-700">Green: {greenCount}</label>
               <input
                 type="range"
-                min="0"
+                min="1"
                 max="255"
                 name="green"
                 value={greenCount}
@@ -59,7 +59,7 @@ const Modal = ({ isOpen, onClose, onChange }) => {
               <label htmlFor="blue" className="block text-sm font-medium text-gray-700">Blue: {blueCount}</label>
               <input
                 type="range"
-                min="0"
+                min="1"
                 max="255"
                 name="blue"
                 value={blueCount}
