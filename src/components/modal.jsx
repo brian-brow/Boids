@@ -8,6 +8,7 @@ const Modal = ({ isOpen, onClose, onChange }) => {
   const [linesEnabled, setLinesEnabled] = useState(false);
   const [maxSpeed, setMaxSpeed] = useState(6);
   const [minSpeed, setMinSpeed] = useState(3);
+  const [shockWaveRad, setShockWaveRad] = useState(150);
 
   const handleSliderChange = (color, value) => {
     if (color === 'red') {
@@ -26,6 +27,7 @@ const Modal = ({ isOpen, onClose, onChange }) => {
   const handleLinesCheckboxChange = () => {
     setLinesEnabled(!linesEnabled);
   };
+
   const handleMinSpeedChange = (e) => {
     setMinSpeed(e.target.value);
   };
@@ -33,10 +35,14 @@ const Modal = ({ isOpen, onClose, onChange }) => {
     setMaxSpeed(e.target.value);
   };
 
+  const handleShockWaveRadChange = (e) => {
+    setShockWaveRad(e.target.value);
+  }
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onChange({ redCount, greenCount, blueCount, sharkEnabled, linesEnabled, maxSpeed, minSpeed });
+    onChange({ redCount, greenCount, blueCount, sharkEnabled, linesEnabled, maxSpeed, minSpeed, shockWaveRad });
     onClose();
   };
 
@@ -131,18 +137,18 @@ const Modal = ({ isOpen, onClose, onChange }) => {
               className="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none"
             />
           </div>
-          {/* <div className="mb-4">
-            <label htmlFor="minSpeed" className="block text-sm font-medium text-gray-700">Min Speed: {minSpeed}</label>
+          <div className="mb-4">
+            <label htmlFor="shockWaveRad" className="block text-sm font-medium text-gray-700">Shock Wave Radius: {shockWaveRad}</label>
             <input
               type="range"
-              min="1"
-              max="10"
-              name="minSpeed"
-              value={minSpeed}
-              onChange={handleMinSpeedChange}
+              min="10"
+              max="300"
+              name="shockWaveRad"
+              value={shockWaveRad}
+              onChange={handleShockWaveRadChange}
               className="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none"
             />
-          </div> */}
+          </div>
           {/* <div className="mb-4">
             <label htmlFor="maxSpeed" className="block text-sm font-medium text-gray-700">Max Speed: {maxSpeed}</label>
             <input

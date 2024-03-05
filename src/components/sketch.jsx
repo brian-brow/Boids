@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import p5 from 'p5';
 
-const Sketch = ({boidColors,sharkEnabled,speed,linesEnabled}) => {
+const Sketch = ({boidColors,sharkEnabled,speed,linesEnabled,shockWaveRad}) => {
   const sketchRef = React.useRef();
 
   useEffect(() => {
@@ -10,16 +10,20 @@ const Sketch = ({boidColors,sharkEnabled,speed,linesEnabled}) => {
       let redFishList = [];
       let greenFishList = [];
       let blueFishList = [];
+
       let shark;
+
+      let shockWaves = [];
+
       let redCount = boidColors.redCount;
       let greenCount = boidColors.greenCount;
       let blueCount = boidColors.blueCount;
+
       let isSharkEnabled = sharkEnabled;
       let isLinesEnabled = linesEnabled;
-      console.log(speed)
+
       let stateMaxSpeed = speed.maxSpeed; 
       let stateMinSpeed = speed.minSpeed; 
-
       class Boid {
         constructor(xPos = 200, yPos = 200, v = 4, color = 255, dimX, dimY) {
             this.Pos = p.createVector(xPos,yPos);
@@ -39,6 +43,7 @@ const Sketch = ({boidColors,sharkEnabled,speed,linesEnabled}) => {
 
             this.yep = false;
             this.shark = false;
+            this.ghost = false;
             this.color = color;
             this.dimX = dimX;
             this.dimY = dimY;
@@ -52,6 +57,8 @@ const Sketch = ({boidColors,sharkEnabled,speed,linesEnabled}) => {
             this.bias = 0.01;
             this.maxSpeed = speed.maxSpeed;
             this.minSpeed = speed.minSpeed;
+
+            this.shockWave = p.createVector(0,0);
         }
 
         update() {
@@ -155,8 +162,7 @@ const Sketch = ({boidColors,sharkEnabled,speed,linesEnabled}) => {
             let avg_py = 0;
             let neighbors = 0;
 
-            let maxSpeed = stateMaxSpeed;
-            let minSpeed = stateMinSpeed;
+            let shockSpeed = 6;
 
             for (let i = 0; i < fishList.length; i++) {
                 let dis = p.sqrt(
@@ -164,7 +170,7 @@ const Sketch = ({boidColors,sharkEnabled,speed,linesEnabled}) => {
                                 p.pow(this.Pos.y - fishList[i].Pos.y, 2));
                 
                 //shark logic
-                if(this.shark && I != i && dis < this.visionRadius*4) {
+                if(this.shark && I != i && dis < this.visionRadius*4 && !fishList[i].ghost) {
                     if(dis < this.avoidRadius) {
                         close_dx += fishList[i].Pos.x - this.Pos.x;
                         close_dy += fishList[i].Pos.y - this.Pos.y;
@@ -173,6 +179,7 @@ const Sketch = ({boidColors,sharkEnabled,speed,linesEnabled}) => {
                         fishList[i].color = p.color(255,255,255,50);
                         fishList[i].maxSpeed = 1;
                         fishList[i].minSpeed = 0;
+                        fishList[i].ghost = true;
                     }
                 }
 
@@ -220,13 +227,13 @@ const Sketch = ({boidColors,sharkEnabled,speed,linesEnabled}) => {
             if(this.Pos.x > this.dimX - 200) {
                 this.vel.x += -this.turnFactor;
             }
-            if(this.Pos.x < 100) {
+            if(this.Pos.x < 200) {
                 this.vel.x += this.turnFactor;
             }
             if(this.Pos.y > this.dimY - 200) {
                 this.vel.y += -this.turnFactor;
             }
-            if(this.Pos.y < 100) {
+            if(this.Pos.y < 200) {
                 this.vel.y += this.turnFactor;
             }
 
@@ -234,17 +241,58 @@ const Sketch = ({boidColors,sharkEnabled,speed,linesEnabled}) => {
             //     this.vel.x += bias;
             // }
 
+            this.vel.x += this.shockWave.x;
+            this.vel.y += this.shockWave.y;
+
             let speed = p.sqrt(this.vel.x*this.vel.x + this.vel.y*this.vel.y);
             if(speed > this.maxSpeed) {
-                this.vel.x = (this.vel.x/speed) * this.maxSpeed;
-                this.vel.y = (this.vel.y/speed) * this.maxSpeed;
+                if(this.shockWave.mag() > 0) {
+                    this.vel.x = (this.vel.x/speed) * shockSpeed;
+                    this.vel.y = (this.vel.y/speed) * shockSpeed;
+                } else {
+                    this.vel.x = (this.vel.x/speed) * this.maxSpeed;
+                    this.vel.y = (this.vel.y/speed) * this.maxSpeed;
+                }
             }
             if(speed < this.minSpeed) {
                 this.vel.x = (this.vel.x/speed) * this.minSpeed;
                 this.vel.y = (this.vel.y/speed) * this.minSpeed;
             }
+
+            this.shockWave.x = 0;
+            this.shockWave.y = 0;
         }
     }
+      class ShockWave {
+        constructor(xPos, yPos) {
+            this.Pos = p.createVector(xPos,yPos);
+            this.opacity = 255;
+            this.diam = 0;
+            this.maxDiam = shockWaveRad * 2;
+            this.done = false;
+        }
+
+        update(fishList) {
+            if(this.opacity <= 0) {
+                this.done = true;
+            }
+            p.fill(255,255,255,this.opacity/3);
+            p.stroke(255,255,255,this.opacity);
+            p.circle(this.Pos.x,this.Pos.y,this.diam);
+            this.opacity -= 255 / (this.maxDiam / 10);
+            this.diam += 10;
+            
+            for(let i = 0; i < fishList.length; i++) {
+                let dis = p.createVector(0,0);
+                dis.x = fishList[i].Pos.x;
+                dis.y = fishList[i].Pos.y
+                dis.sub(this.Pos);
+                if(dis.mag() < this.diam/2) {
+                    fishList[i].shockWave.add(dis);
+                }
+            }
+        }
+      }
 
     p.setup = () => {
         p.textAlign(p.CENTER,p.CENTER);
@@ -255,11 +303,9 @@ const Sketch = ({boidColors,sharkEnabled,speed,linesEnabled}) => {
 
         let color;
 
-        if (isSharkEnabled){
-            shark = new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, p.color(0,0,0), dimWidth, dimHeight);
-            shark.shark = true;
-            console.log("shark");
-        }
+        shark = new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, p.color(0,0,0), dimWidth, dimHeight);
+        shark.shark = true;
+        console.log("shark");
 
         for (let i = 0; i < redCount; i++) {
             color = p.color(168, 50, 90); 
@@ -273,9 +319,9 @@ const Sketch = ({boidColors,sharkEnabled,speed,linesEnabled}) => {
             color = p.color(50, 98, 168); 
             blueFishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
         }
-      };
+    };
 
-      p.draw = () => {
+    p.draw = () => {
         p.background(20);
         p.fill(255);
         p.noFill();
@@ -300,24 +346,37 @@ const Sketch = ({boidColors,sharkEnabled,speed,linesEnabled}) => {
             greenFishList[i].check(greenFishList, i);
             greenFishList[i].update();
             greenFishList[i].display();
-         }
-         for (let i = 0; i < blueFishList.length; i++) {
+        }
+        for (let i = 0; i < blueFishList.length; i++) {
             blueFishList[i].check(blueFishList, i);
             blueFishList[i].update();
             blueFishList[i].display();
-         }
-        if (isSharkEnabled){
-          shark.check(redFishList.concat(blueFishList.concat(greenFishList)), 1);
-          shark.update();
-          shark.display();
         }
-      };
+        let fishList = redFishList.concat(blueFishList.concat(greenFishList))
+        if (isSharkEnabled){
+            shark.check(fishList, 1);
+            shark.update();
+            shark.display();
+        }
+        fishList.push(shark);
+        for(let i = 0; i < shockWaves.length; i++) {
+            if(shockWaves[i].done) {
+                shockWaves.splice(i,1);
+                continue;
+            }
+            shockWaves[i].update(fishList);
+        }
+    };
 
-      p.windowResized = () => {
+    p.windowResized = () => {
         dimWidth = sketchRef.current.offsetWidth;
         dimHeight = window.innerHeight - 100;
         p.resizeCanvas(dimWidth, dimHeight);
-      };
+    };
+
+    p.mouseClicked = () => {
+        shockWaves.push(new ShockWave(p.mouseX, p.mouseY));
+    };
     });
     return () => {
       sketch.remove();

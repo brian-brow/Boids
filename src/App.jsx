@@ -9,6 +9,7 @@ const App = () => {
   const [sharkEnabled, setSharkEnabled] = useState(false);
   const [speed, setSpeed] = useState({ maxSpeed: 6, minSpeed: 3 });
   const [linesEnabled, setLinesEnabled] = useState(false);
+  const [shockWaveRad, setShockWaveRad] = useState(150);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -24,6 +25,7 @@ const App = () => {
     const minSpeed = parseInt(colors.minSpeed);
     setSpeed({ maxSpeed, minSpeed });
     setLinesEnabled(colors.linesEnabled);
+    setShockWaveRad(colors.shockWaveRad);
   };
 
   return (
@@ -38,7 +40,7 @@ const App = () => {
         </a>
       </header>
       <Modal isOpen={menuOpen} onClose={toggleMenu} onChange={handleModalChange} />
-      <Sketch boidColors={boidColors} sharkEnabled={sharkEnabled} speed={speed} linesEnabled={linesEnabled}/>
+      <Sketch boidColors={boidColors} sharkEnabled={sharkEnabled} speed={speed} linesEnabled={linesEnabled} shockWaveRad={shockWaveRad}/>
       <About />
     </div>
   );
