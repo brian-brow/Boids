@@ -7,6 +7,7 @@ const App = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [boidColors, setBoidColors] = useState({ redCount: 100, greenCount: 100, blueCount: 100 });
   const [sharkEnabled, setSharkEnabled] = useState(false);
+  const [speed, setSpeed] = useState({ maxSpeed: 6, minSpeed: 3 });
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -18,6 +19,9 @@ const App = () => {
     const blueCount = parseInt(colors.blueCount);
     setBoidColors({ redCount, greenCount, blueCount });
     setSharkEnabled(colors.sharkEnabled);
+    const maxSpeed = parseInt(colors.maxSpeed);
+    const minSpeed = parseInt(colors.minSpeed);
+    setSpeed({ maxSpeed, minSpeed });
   };
 
   return (
@@ -32,7 +36,7 @@ const App = () => {
         </a>
       </header>
       <Modal isOpen={menuOpen} onClose={toggleMenu} onChange={handleModalChange} />
-      <Sketch boidColors={boidColors} sharkEnabled={sharkEnabled} />
+      <Sketch boidColors={boidColors} sharkEnabled={sharkEnabled} speed={speed}/>
       <About />
     </div>
   );

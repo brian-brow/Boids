@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import p5 from 'p5';
 
-const Sketch = ({boidColors,sharkEnabled}) => {
+const Sketch = ({boidColors,sharkEnabled,speed}) => {
   const sketchRef = React.useRef();
 
   useEffect(() => {
@@ -9,11 +9,15 @@ const Sketch = ({boidColors,sharkEnabled}) => {
       let dimWidth, dimHeight;
       let redFishList = [];
       let greenFishList = [];
-      let blueFishList = [];
+      let blueFishList = [];    
       let redCount = boidColors.redCount;
       let greenCount = boidColors.greenCount;
       let blueCount = boidColors.blueCount;
       let isSharkEnabled = sharkEnabled;
+      console.log(speed)
+      let stateMaxSpeed = speed.maxSpeed; 
+      let stateMinSpeed = speed.minSpeed; 
+
       class Boid {
         constructor(xPos = 200, yPos = 200, v = 4, color = 255, dimX, dimY) {
             this.Pos = p.createVector(xPos,yPos);
@@ -146,8 +150,8 @@ const Sketch = ({boidColors,sharkEnabled}) => {
             let matchingFactor = 0.05;
             let turnFactor = 0.2;
             let bias = 0.01;
-            let maxSpeed = 6;
-            let minSpeed = 3;
+            let maxSpeed = stateMaxSpeed;
+            let minSpeed = stateMinSpeed;
 
             for (let i = 0; i < fishList.length; i++) {
                 let dis = p.sqrt(
@@ -309,7 +313,7 @@ const Sketch = ({boidColors,sharkEnabled}) => {
     return () => {
       sketch.remove();
     };
-  }, [boidColors]);
+  }, [boidColors,sharkEnabled,speed]);
 
   return <div ref={sketchRef}></div>;
 };

@@ -5,6 +5,8 @@ const Modal = ({ isOpen, onClose, onChange }) => {
   const [greenCount, setGreenCount] = useState(100);
   const [blueCount, setBlueCount] = useState(100);
   const [sharkEnabled, setSharkEnabled] = useState(false);
+  const [maxSpeed, setMaxSpeed] = useState(6);
+  const [minSpeed, setMinSpeed] = useState(3);
 
   const handleSliderChange = (color, value) => {
     if (color === 'red') {
@@ -19,10 +21,17 @@ const Modal = ({ isOpen, onClose, onChange }) => {
   const handleSharkCheckboxChange = () => {
     setSharkEnabled(!sharkEnabled);
   };
+  const handleMinSpeedChange = (e) => {
+    setMinSpeed(e.target.value);
+  };
+  const handleMaxSpeedChange = (e) => {
+    setMaxSpeed(e.target.value);
+  };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onChange({ redCount, greenCount, blueCount, sharkEnabled });
+    onChange({ redCount, greenCount, blueCount, sharkEnabled, maxSpeed, minSpeed});
     onClose();
   };
 
@@ -82,6 +91,30 @@ const Modal = ({ isOpen, onClose, onChange }) => {
               />
               <span className="ml-2 text-gray-700">Enable Shark</span>
             </label>
+          </div>
+          <div className="mb-4">
+            <label htmlFor="minSpeed" className="block text-sm font-medium text-gray-700">Min Speed: {minSpeed}</label>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              name="minSpeed"
+              value={minSpeed}
+              onChange={handleMinSpeedChange}
+              className="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="maxSpeed" className="block text-sm font-medium text-gray-700">Max Speed: {maxSpeed}</label>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              name="maxSpeed"
+              value={maxSpeed}
+              onChange={handleMaxSpeedChange}
+              className="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none"
+            />
           </div>
         </div>
         <button className="absolute top-4 right-4 text-red-500" onClick={onClose}>X</button>
