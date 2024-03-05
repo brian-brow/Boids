@@ -5,6 +5,7 @@ const Modal = ({ isOpen, onClose, onChange }) => {
   const [greenCount, setGreenCount] = useState(100);
   const [blueCount, setBlueCount] = useState(100);
   const [sharkEnabled, setSharkEnabled] = useState(false);
+  const [linesEnabled, setLinesEnabled] = useState(false);
   const [maxSpeed, setMaxSpeed] = useState(6);
   const [minSpeed, setMinSpeed] = useState(3);
 
@@ -21,6 +22,10 @@ const Modal = ({ isOpen, onClose, onChange }) => {
   const handleSharkCheckboxChange = () => {
     setSharkEnabled(!sharkEnabled);
   };
+
+  const handleLinesCheckboxChange = () => {
+    setLinesEnabled(!linesEnabled);
+  };
   const handleMinSpeedChange = (e) => {
     setMinSpeed(e.target.value);
   };
@@ -31,7 +36,7 @@ const Modal = ({ isOpen, onClose, onChange }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onChange({ redCount, greenCount, blueCount, sharkEnabled, maxSpeed, minSpeed});
+    onChange({ redCount, greenCount, blueCount, sharkEnabled, linesEnabled, maxSpeed, minSpeed });
     onClose();
   };
 
@@ -91,12 +96,22 @@ const Modal = ({ isOpen, onClose, onChange }) => {
               />
               <span className="ml-2 text-gray-700">Enable Shark</span>
             </label>
+            <label htmlFor="sightLines" className="inline-flex items-center">
+              <input
+                type="checkbox"
+                id="shark"
+                checked={linesEnabled}
+                onChange={handleLinesCheckboxChange}
+                className="form-checkbox h-5 w-5 text-indigo-600"
+              />
+              <span className="ml-2 text-gray-700">Show Sight Lines</span>
+            </label>
           </div>
           <div className="mb-4">
             <label htmlFor="minSpeed" className="block text-sm font-medium text-gray-700">Min Speed: {minSpeed}</label>
             <input
               type="range"
-              min="1"
+              min="0"
               max="10"
               name="minSpeed"
               value={minSpeed}
@@ -108,7 +123,7 @@ const Modal = ({ isOpen, onClose, onChange }) => {
             <label htmlFor="maxSpeed" className="block text-sm font-medium text-gray-700">Max Speed: {maxSpeed}</label>
             <input
               type="range"
-              min="1"
+              min="0"
               max="10"
               name="maxSpeed"
               value={maxSpeed}
@@ -116,6 +131,30 @@ const Modal = ({ isOpen, onClose, onChange }) => {
               className="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none"
             />
           </div>
+          {/* <div className="mb-4">
+            <label htmlFor="minSpeed" className="block text-sm font-medium text-gray-700">Min Speed: {minSpeed}</label>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              name="minSpeed"
+              value={minSpeed}
+              onChange={handleMinSpeedChange}
+              className="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none"
+            />
+          </div> */}
+          {/* <div className="mb-4">
+            <label htmlFor="maxSpeed" className="block text-sm font-medium text-gray-700">Max Speed: {maxSpeed}</label>
+            <input
+              type="range"
+              min="1"
+              max="10"
+              name="maxSpeed"
+              value={maxSpeed}
+              onChange={handleMaxSpeedChange}
+              className="mt-1 p-2 block w-full border border-gray-300 rounded-md focus:outline-none"
+            />
+          </div> */}
         </div>
         <button className="absolute top-4 right-4 text-red-500" onClick={onClose}>X</button>
       </div>

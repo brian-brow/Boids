@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import p5 from 'p5';
 
-const Sketch = ({boidColors,sharkEnabled,speed}) => {
+const Sketch = ({boidColors,sharkEnabled,speed,linesEnabled}) => {
   const sketchRef = React.useRef();
 
   useEffect(() => {
@@ -9,11 +9,13 @@ const Sketch = ({boidColors,sharkEnabled,speed}) => {
       let dimWidth, dimHeight;
       let redFishList = [];
       let greenFishList = [];
-      let blueFishList = [];    
+      let blueFishList = [];
+      let shark;
       let redCount = boidColors.redCount;
       let greenCount = boidColors.greenCount;
       let blueCount = boidColors.blueCount;
       let isSharkEnabled = sharkEnabled;
+      let isLinesEnabled = linesEnabled;
       console.log(speed)
       let stateMaxSpeed = speed.maxSpeed; 
       let stateMinSpeed = speed.minSpeed; 
@@ -29,12 +31,12 @@ const Sketch = ({boidColors,sharkEnabled,speed}) => {
                 xPos + 5,
                 yPos + 10,
             ];
-            this.v = v;
             if(p.floor(p.random(2)) == 0) {
                 this.vel = p.createVector(0, v);
             } else {
                 this.vel = p.createVector(0, -v);
             }
+
             this.yep = false;
             this.shark = false;
             this.color = color;
@@ -42,6 +44,14 @@ const Sketch = ({boidColors,sharkEnabled,speed}) => {
             this.dimY = dimY;
             this.avoidRadius = 16;
             this.visionRadius = 80;
+
+            this.centeringFactor = 0.0005;
+            this.avoidFactor = 0.04;
+            this.matchingFactor = 0.05;
+            this.turnFactor = 0.2;
+            this.bias = 0.01;
+            this.maxSpeed = speed.maxSpeed;
+            this.minSpeed = speed.minSpeed;
         }
 
         update() {
@@ -145,11 +155,6 @@ const Sketch = ({boidColors,sharkEnabled,speed}) => {
             let avg_py = 0;
             let neighbors = 0;
 
-            let centeringFactor = 0.0005;
-            let avoidFactor = 0.04;
-            let matchingFactor = 0.05;
-            let turnFactor = 0.2;
-            let bias = 0.01;
             let maxSpeed = stateMaxSpeed;
             let minSpeed = stateMinSpeed;
 
@@ -165,7 +170,9 @@ const Sketch = ({boidColors,sharkEnabled,speed}) => {
                         close_dy += fishList[i].Pos.y - this.Pos.y;
                     }
                     if(dis < 10) {
-                        fishList[i].color = p.color(255);
+                        fishList[i].color = p.color(255,255,255,50);
+                        fishList[i].maxSpeed = 1;
+                        fishList[i].minSpeed = 0;
                     }
                 }
 
@@ -200,27 +207,27 @@ const Sketch = ({boidColors,sharkEnabled,speed}) => {
             avg_py = avg_py / neighbors;
 
             if(neighbors > 0) {
-                this.vel.x += (avg_vx - this.vel.x) * matchingFactor;
-                this.vel.y += (avg_vy - this.vel.y) * matchingFactor;
+                this.vel.x += (avg_vx - this.vel.x) * this.matchingFactor;
+                this.vel.y += (avg_vy - this.vel.y) * this.matchingFactor;
 
-                this.vel.x += (avg_px - this.Pos.x) * centeringFactor;
-                this.vel.y += (avg_py - this.Pos.y) * centeringFactor;
+                this.vel.x += (avg_px - this.Pos.x) * this.centeringFactor;
+                this.vel.y += (avg_py - this.Pos.y) * this.centeringFactor;
             }
 
-            this.vel.x += close_dx * avoidFactor;
-            this.vel.y += close_dy * avoidFactor;
+            this.vel.x += close_dx * this.avoidFactor;
+            this.vel.y += close_dy * this.avoidFactor;
 
             if(this.Pos.x > this.dimX - 200) {
-                this.vel.x += -turnFactor;
+                this.vel.x += -this.turnFactor;
             }
             if(this.Pos.x < 100) {
-                this.vel.x += turnFactor;
+                this.vel.x += this.turnFactor;
             }
             if(this.Pos.y > this.dimY - 200) {
-                this.vel.y += -turnFactor;
+                this.vel.y += -this.turnFactor;
             }
             if(this.Pos.y < 100) {
-                this.vel.y += turnFactor;
+                this.vel.y += this.turnFactor;
             }
 
             // if(this.color.toString() == "rgba(50,98,168,1)") {
@@ -228,13 +235,13 @@ const Sketch = ({boidColors,sharkEnabled,speed}) => {
             // }
 
             let speed = p.sqrt(this.vel.x*this.vel.x + this.vel.y*this.vel.y);
-            if(speed > maxSpeed) {
-                this.vel.x = (this.vel.x/speed) * maxSpeed;
-                this.vel.y = (this.vel.y/speed) * maxSpeed;
+            if(speed > this.maxSpeed) {
+                this.vel.x = (this.vel.x/speed) * this.maxSpeed;
+                this.vel.y = (this.vel.y/speed) * this.maxSpeed;
             }
-            if(speed < minSpeed) {
-                this.vel.x = (this.vel.x/speed) * minSpeed;
-                this.vel.y = (this.vel.y/speed) * minSpeed;
+            if(speed < this.minSpeed) {
+                this.vel.x = (this.vel.x/speed) * this.minSpeed;
+                this.vel.y = (this.vel.y/speed) * this.minSpeed;
             }
         }
     }
@@ -245,15 +252,14 @@ const Sketch = ({boidColors,sharkEnabled,speed}) => {
         dimWidth = sketchRef.current.offsetWidth;
         dimHeight = window.innerHeight;
         p.createCanvas(dimWidth, dimHeight).parent(sketchRef.current);
-      
-        
-
-        // + boidColors.greenCount) {
-        //     color = p.color(90, 168, 50); 
-        // } else {
-        //     color = p.color(50, 98, 168); 
 
         let color;
+
+        if (isSharkEnabled){
+            shark = new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, p.color(0,0,0), dimWidth, dimHeight);
+            shark.shark = true;
+            console.log("shark");
+        }
 
         for (let i = 0; i < redCount; i++) {
             color = p.color(168, 50, 90); 
@@ -267,10 +273,6 @@ const Sketch = ({boidColors,sharkEnabled,speed}) => {
             color = p.color(50, 98, 168); 
             blueFishList.push(new Boid(p.random() * dimWidth, p.random() * dimHeight, 1, color, dimWidth, dimHeight));
         }
-        
-        // // fishList[0].yep = true;
-        // // fishList[0].color = 255;
-
       };
 
       p.draw = () => {
@@ -280,28 +282,35 @@ const Sketch = ({boidColors,sharkEnabled,speed}) => {
         p.stroke(255);
         p.rect(200,200,dimWidth-400,dimHeight-400);
         
+        if (isLinesEnabled) {
+            redFishList[0].yep = true;
+            greenFishList[0].yep = true;
+            blueFishList[0].yep = true;
+        } else {
+            redFishList[0].yep = false;
+            greenFishList[0].yep = false;
+            blueFishList[0].yep = false;
+        }
         for (let i = 0; i < redFishList.length; i++) {
            redFishList[i].check(redFishList, i);
            redFishList[i].update();
            redFishList[i].display();
-           redFishList[0].yep = true;
-           if (isSharkEnabled){
-                redFishList[0].shark = true;
-                redFishList[0].color = 255;
-           }
         }
         for (let i = 0; i < greenFishList.length; i++) {
             greenFishList[i].check(greenFishList, i);
             greenFishList[i].update();
             greenFishList[i].display();
          }
-         greenFishList[0].yep = true;
          for (let i = 0; i < blueFishList.length; i++) {
             blueFishList[i].check(blueFishList, i);
             blueFishList[i].update();
             blueFishList[i].display();
          }
-         blueFishList[0].yep = true;
+        if (isSharkEnabled){
+          shark.check(redFishList.concat(blueFishList.concat(greenFishList)), 1);
+          shark.update();
+          shark.display();
+        }
       };
 
       p.windowResized = () => {
